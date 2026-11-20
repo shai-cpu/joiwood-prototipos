@@ -1,0 +1,505 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Joiwood Prototipo 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: un taller a oscuras con una sola luz naranja para todo lo que es 3D (héroe que se abre con el scroll,
+   foto de tu cuarto), y bandas de papel y arena para armar el espacio y comprar. Rótulos de plano en mono. */
+:root{
+  color-scheme: light;
+  --papel:#F8F4EE; --arena:#EFDCC6; --arena-2:#F4E8DA; --tostado:#E3B27E;
+  --naranja:#F08A0C; --naranja-osc:#C96A00;
+  --carbon:#262220; --carbon-2:#4A4440; --gris:#8A8582; --linea:#E4D8CA; --blanco:#FFFDFA;
+  --noche:#15110F; --noche-2:#211B18; --noche-linea:#3B322C; --humo:#B9B2AB;
+  --ok:#2F7D4F; --mal:#B3402E;
+  --f-disp:"Montserrat","Arial Black","Helvetica Neue",Arial,sans-serif;
+  --f-text:"Figtree","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:6px; --max:1320px; --cab:60px; --proto:40px;
+  --gut:max(16px, env(safe-area-inset-left, 0px)); --gutR:max(16px, env(safe-area-inset-right, 0px));
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{background:var(--papel);color:var(--carbon);font-family:var(--f-text);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:70;background:var(--noche)}
+a{color:inherit} button{font:inherit;color:inherit;cursor:pointer} img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--naranja);outline-offset:2px}
+.wrap{max-width:var(--max);margin-inline:auto;padding-left:var(--gut);padding-right:var(--gutR)}
+h1,h2,h3{font-family:var(--f-disp);font-weight:900;text-transform:uppercase;letter-spacing:-.015em;line-height:1;text-wrap:balance;margin:0}
+h2{font-size:clamp(30px,4.6vw,60px)}
+.marca{background:var(--naranja);color:var(--blanco);padding:.02em .16em .06em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.ceja{font-family:var(--f-mono);font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--naranja-osc);display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.ceja::before{content:"";width:26px;height:2px;background:currentColor}
+.oscuro .ceja{color:var(--naranja)}
+.mono{font-family:var(--f-mono)} .num{font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:var(--r);padding:15px 22px;font-family:var(--f-disp);font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:transform .15s ease, background .15s ease, color .15s ease}
+.btn:active{transform:translateY(1px)} .btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-n{background:var(--naranja);color:var(--blanco)} .btn-n:hover:not(:disabled){background:var(--naranja-osc)}
+.btn-c{background:var(--carbon);color:var(--blanco)} .btn-c:hover{background:#000}
+.btn-l{background:transparent;color:var(--carbon);box-shadow:inset 0 0 0 1.5px var(--carbon)} .btn-l:hover{background:var(--carbon);color:var(--blanco)}
+.oscuro .btn-l{color:var(--blanco);box-shadow:inset 0 0 0 1.5px var(--humo)} .oscuro .btn-l:hover{background:var(--blanco);color:var(--carbon)}
+.btn-ch{padding:10px 14px;font-size:11.5px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.pt{width:26px;height:26px;border-radius:50%;border:2px solid var(--blanco);background:var(--c);box-shadow:0 0 0 1px var(--gris);padding:0;flex:none;display:inline-block}
+.pt.on{box-shadow:0 0 0 2.5px var(--naranja)}
+.tab{border:0;background:transparent;font-family:var(--f-disp);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:9px 14px;border-radius:999px;color:var(--carbon-2);white-space:nowrap}
+.tab.on{background:var(--carbon);color:var(--blanco)}
+.oscuro .tab{color:var(--humo)} .oscuro .tab.on{background:var(--naranja);color:var(--blanco)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.muestraTag{position:absolute;left:8px;bottom:8px;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;background:rgba(38,34,32,.72);color:var(--blanco);padding:2px 6px;border-radius:3px;pointer-events:none}
+
+/* aviso de prototipo y cabecera */
+.proto{background:var(--naranja);color:var(--noche);font-size:13px}
+.proto .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between;padding-block:7px;flex-wrap:wrap}
+.proto .breve{display:none}
+.proto button{border:0;background:var(--noche);color:var(--blanco);font-weight:700;font-size:12px;padding:5px 10px;border-radius:4px}
+.cab{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--noche);color:var(--blanco);height:var(--cab);border-bottom:1px solid var(--noche-linea)}
+.cab .wrap{height:100%;display:flex;align-items:center;gap:22px}
+.cab .logo{display:block;line-height:0;flex:none} .cab .logo svg{height:34px;width:auto}
+.cab nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none} .cab nav::-webkit-scrollbar{display:none}
+.cab nav a{font-family:var(--f-disp);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--humo);padding:8px 10px;border-radius:4px;white-space:nowrap}
+.cab nav a:hover{color:var(--blanco);background:var(--noche-2)}
+.icono{position:relative;width:42px;height:42px;display:grid;place-items:center;border:0;background:transparent;color:var(--blanco);border-radius:50%;flex:none}
+.icono svg{width:22px;height:22px} .icono:hover{background:var(--noche-2)}
+.globo{position:absolute;top:2px;right:0;min-width:18px;height:18px;border-radius:9px;background:var(--naranja);color:var(--blanco);font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px}
+
+/* ---------- héroe: historia con scroll ---------- */
+.historia{position:relative;background:var(--noche);color:var(--blanco);height:430vh}
+.historia.sin3d{height:auto}
+.pin{position:sticky;top:calc(var(--cab) + env(safe-area-inset-top,0px));height:calc(100vh - var(--cab) - var(--proto));height:calc(100svh - var(--cab) - var(--proto));overflow:hidden}
+.historia.sin3d .pin{position:relative;height:auto;min-height:560px}
+.halo{position:absolute;inset:0;background:
+  radial-gradient(52% 58% at 70% 52%, rgba(240,138,12,.26), rgba(240,138,12,.07) 46%, transparent 72%),
+  radial-gradient(70% 40% at 70% 96%, rgba(227,178,126,.16), transparent 70%),
+  linear-gradient(180deg,#15110F,#1C1613 60%,#120E0C)}
+.halo::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,253,250,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,253,250,.035) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(60% 60% at 70% 55%,#000,transparent 78%);-webkit-mask-image:radial-gradient(60% 60% at 70% 55%,#000,transparent 78%)}
+#escenario{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;cursor:grab}
+#escenario:active{cursor:grabbing}
+#escenario.pulso{animation:pulso .5s ease}
+@keyframes pulso{0%{filter:brightness(1.7) saturate(1.2)}100%{filter:none}}
+.respaldo{display:none;position:absolute;right:4%;top:50%;transform:translateY(-50%);width:min(46%,560px);border-radius:var(--r)}
+.sin3d .respaldo{display:block} .sin3d #escenario,.sin3d .riel,.sin3d .baja{display:none}
+#lineas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#lineas line{stroke:var(--naranja);stroke-width:1;stroke-dasharray:3 3;opacity:0;transition:opacity .3s}
+#rotulos,#cuartoRotulos,#fichaRotulos{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.rotulo{position:absolute;left:0;top:0;opacity:0;transition:opacity .3s;font-family:var(--f-mono);font-size:12px;line-height:1.25;white-space:nowrap;will-change:transform}
+.rotulo.on{opacity:1}
+.rotulo span{display:block;background:rgba(21,17,15,.82);border-left:2px solid var(--naranja);padding:5px 9px;transform:translateY(-50%)}
+.rotulo.izq span{border-left:0;border-right:2px solid var(--naranja)}
+.cota{position:absolute;left:0;top:0;opacity:0;transition:opacity .3s;font-family:var(--f-mono);font-weight:600;font-size:12px;background:var(--naranja);color:var(--blanco);padding:2px 7px;border-radius:3px;white-space:nowrap;will-change:transform}
+.cota.on,.cota.clara{opacity:1}
+.cota.clara{background:var(--carbon)} .cota.libre{background:var(--blanco);color:var(--naranja-osc);box-shadow:0 0 0 1px var(--naranja)}
+.paneles{position:relative;height:100%;display:grid;align-items:center;pointer-events:none}
+.panel{grid-area:1/1;max-width:min(520px,43vw);opacity:0;transform:translateY(26px);transition:opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+.panel.on{opacity:1;transform:none;visibility:visible}
+.panel.on>*{pointer-events:auto}
+.sin3d .panel{display:none;max-width:48%} .sin3d .panel:first-child{display:block;opacity:1;transform:none;visibility:visible}
+.panel h1{font-size:clamp(40px,6vw,88px)}
+.panel h1 .marca{display:inline-block;background:linear-gradient(var(--naranja),var(--naranja)) no-repeat left/0% 100%;animation:barre .7s .55s cubic-bezier(.7,0,.2,1) forwards}
+@keyframes barre{to{background-size:100% 100%}}
+.panel p:not(.ceja){color:var(--humo);font-size:clamp(16px,1.35vw,19px);max-width:44ch;margin:20px 0 0}
+.panel .fila{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.llega{display:inline-flex;align-items:center;gap:9px;margin-top:22px;font-size:14px;color:var(--blanco)}
+.llega i{width:8px;height:8px;border-radius:50%;background:#58C07F;box-shadow:0 0 0 4px rgba(88,192,127,.2)}
+.muestras{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.muestra{display:flex;align-items:center;gap:9px;border:1px solid var(--noche-linea);background:var(--noche-2);color:var(--blanco);padding:7px 14px 7px 7px;border-radius:999px;font-size:13.5px;font-weight:600}
+.muestra::before{content:"";width:26px;height:26px;border-radius:50%;background:var(--c)}
+.muestra.on{border-color:var(--naranja);box-shadow:0 0 0 1px var(--naranja)}
+.precioFila{display:flex;align-items:baseline;gap:12px;margin-top:22px;font-family:var(--f-disp);font-weight:800}
+.precioFila b{font-size:34px} .precioFila s{color:var(--gris);font-weight:600} .precioFila span{font-family:var(--f-text);font-weight:500;font-size:14px;color:var(--humo)}
+.riel{position:absolute;right:max(18px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);display:grid;gap:10px}
+.riel i{width:3px;height:26px;background:var(--noche-linea);border-radius:2px;transition:background .3s, height .3s} .riel i.on{background:var(--naranja);height:42px}
+.baja{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--humo);display:flex;flex-direction:column;align-items:center;gap:8px}
+.bajando .baja{opacity:0}
+.baja{transition:opacity .3s}
+.baja::after{content:"";width:1px;height:34px;background:linear-gradient(var(--naranja),transparent);animation:cae 1.8s ease-in-out infinite}
+@keyframes cae{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* cinta */
+.cinta{background:var(--naranja);color:var(--noche);overflow:hidden;border-block:2px solid var(--noche)}
+.cinta div{display:flex;gap:44px;width:max-content;padding-block:13px;font-family:var(--f-disp);font-weight:900;font-size:clamp(15px,1.7vw,22px);letter-spacing:.04em;text-transform:uppercase;animation:corre 34s linear infinite}
+.cinta span{display:flex;align-items:center;gap:44px} .cinta span::after{content:"";width:12px;height:12px;border-radius:50%;border:3.5px solid var(--noche)}
+@keyframes corre{to{transform:translateX(-50%)}}
+
+/* ---------- arma tu espacio ---------- */
+section.banda{padding-block:clamp(56px,8vw,112px);scroll-margin-top:calc(var(--cab) + env(safe-area-inset-top,0px) - 24px)}
+.intro{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px 48px;align-items:end;margin-bottom:34px}
+.intro p:not(.ceja){margin:0;color:var(--carbon-2);max-width:52ch;font-size:17px} .oscuro .intro p:not(.ceja){color:var(--humo)}
+.taller{display:grid;grid-template-columns:250px minmax(0,1fr) 300px;gap:16px;align-items:stretch}
+.lado{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.lado h3{font-size:13px;letter-spacing:.08em;font-weight:800}
+#cuartoPiezas{display:flex;flex-direction:column;gap:6px;overflow:auto;flex:1;min-height:0;margin-inline:-6px;padding-inline:6px}
+.piezasLado{max-height:720px}
+.pz{display:grid;grid-template-columns:46px minmax(0,1fr) 26px;gap:10px;align-items:center;text-align:left;border:1px solid var(--linea);background:var(--papel);border-radius:var(--r);padding:6px;font-weight:600;font-size:13.5px;line-height:1.25;transition:border-color .15s, transform .15s}
+.pz:hover{border-color:var(--naranja);transform:translateX(3px)}
+.pz img{width:46px;height:46px;object-fit:cover;border-radius:4px;background:var(--arena)}
+.pz small{display:block;font-family:var(--f-mono);font-weight:400;font-size:11px;color:var(--gris)}
+.pz i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--carbon);color:var(--blanco);display:grid;place-items:center;font-weight:700}
+.cuartoCaja{--noche:0;position:relative;border-radius:var(--r);overflow:hidden;min-height:480px;background:linear-gradient(180deg,#F1E6D6,#E7D5BD);border:1px solid var(--linea)}
+.cuartoCaja::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 50% 40%,#2A211C,#120E0C);opacity:var(--noche)}
+#cuarto{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab} #cuarto.agarra,#fotoLienzo.agarra{cursor:grabbing}
+.dormido canvas{pointer-events:none}
+.velo{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);border:0;background:var(--carbon);color:var(--blanco);font-weight:700;font-size:13px;padding:10px 16px;border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.28);white-space:nowrap;z-index:3}
+.salirTactil{position:absolute;right:10px;top:10px;border:0;background:var(--naranja);color:var(--blanco);font-weight:700;font-size:12px;padding:8px 12px;border-radius:999px;z-index:3}
+.barraPz{position:absolute;left:0;top:0;display:flex;align-items:center;gap:8px;background:var(--carbon);color:var(--blanco);padding:6px 8px 6px 12px;border-radius:999px;font-size:12.5px;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:2}
+.barraPz .mu{display:flex;gap:5px} .barraPz .pt{width:20px;height:20px;border-width:1.5px}
+.barraPz button[data-ac]{border:0;background:var(--carbon-2);color:var(--blanco);font-weight:700;font-size:11.5px;padding:6px 10px;border-radius:999px} .barraPz button[data-ac]:hover{background:var(--naranja)}
+.ctrl{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap;z-index:2;max-width:calc(100% - 20px)}
+.ctrl .tabs{background:rgba(255,253,250,.9);border-radius:999px;padding:3px;backdrop-filter:blur(6px);flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none}
+.desl{display:grid;grid-template-columns:86px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13px;font-weight:600}
+.desl input{width:100%;accent-color:var(--naranja)} .desl output,.desl b{font-family:var(--f-mono);font-weight:500;font-size:12px}
+.filaPt{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600} .filaPt>span:first-child{width:86px;flex:none}
+.aviso{font-size:13.5px;font-weight:600;padding:9px 11px;border-radius:var(--r);background:var(--arena-2)}
+.aviso.bien{background:#E4F0E7;color:var(--ok)} .aviso.mal{background:#F7E1DC;color:var(--mal)}
+#cuartoLista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+#cuartoLista li{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:9px;align-items:center;padding:8px 6px;border-bottom:1px solid var(--linea);font-size:13.5px;font-weight:600;line-height:1.25;cursor:pointer;border-radius:4px}
+#cuartoLista li.on{background:var(--arena-2)} #cuartoLista li .pt{width:16px;height:16px;border-width:1px}
+#cuartoLista small{display:block;font-family:var(--f-mono);font-weight:400;font-size:10.5px;color:var(--gris)}
+#cuartoLista li.tot{border-bottom:0;cursor:default;padding-top:12px;font-size:15px} #cuartoLista li.tot b{font-family:var(--f-disp);font-weight:800;font-size:19px}
+.sin3d .taller,.sin3d .estudio{display:none} .aviso3d{display:none;padding:18px;border:1px dashed var(--gris);border-radius:var(--r)} .sin3d .aviso3d{display:block}
+
+/* ---------- pruébalo en tu foto ---------- */
+.oscuro{background:var(--noche);color:var(--blanco)}
+.estudio{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+.fotoMarco{position:relative;border-radius:var(--r);overflow:hidden;background:var(--noche-2);aspect-ratio:4/3;max-height:82vh;margin-inline:auto;width:100%;outline:1px solid var(--noche-linea)}
+.fotoMarco img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#fotoLienzo{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.fotoMarco.suelta{outline:2px dashed var(--naranja)}
+.fotoMarco::after{content:"";position:absolute;left:0;right:0;top:0;height:22%;background:linear-gradient(180deg,transparent,rgba(240,138,12,.5) 70%,rgba(255,236,208,.95));opacity:0;pointer-events:none;transform:translateY(-110%)}
+.fotoMarco.barre::after{animation:escanea .95s cubic-bezier(.5,0,.3,1)}
+.fotoMarco.barre #fotoLienzo{animation:aparece .95s ease}
+@keyframes escanea{0%{opacity:1;transform:translateY(-110%)}100%{opacity:1;transform:translateY(480%)}}
+@keyframes aparece{0%,35%{opacity:0;filter:brightness(2.4)}100%{opacity:1;filter:none}}
+.renderCapa{position:absolute;inset:0;z-index:2;--corte:50%}
+.renderCapa img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(0 0 0 var(--corte))}
+.renderLinea{position:absolute;top:0;bottom:0;left:var(--corte);width:2px;margin-left:-1px;background:var(--blanco);box-shadow:0 0 0 1px rgba(21,17,15,.3);pointer-events:none}
+.renderLinea i{position:absolute;top:50%;left:50%;width:40px;height:40px;border-radius:50%;background:var(--naranja);transform:translate(-50%,-50%);box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.renderLinea i::before,.renderLinea i::after{content:"";position:absolute;top:50%;width:8px;height:8px;border:solid var(--blanco);border-width:0 0 2.5px 2.5px}
+.renderLinea i::before{left:9px;transform:translateY(-50%) rotate(45deg)} .renderLinea i::after{right:9px;transform:translateY(-50%) rotate(-135deg)}
+.renderCapa input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
+.renderCapa input:focus-visible ~ .renderLinea,.renderCapa:focus-within .renderLinea i{outline:2px solid var(--blanco);outline-offset:2px}
+.renderTag{position:absolute;bottom:10px;font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;background:rgba(21,17,15,.78);color:var(--blanco);padding:3px 8px;border-radius:3px;pointer-events:none}
+.renderTag.izq{left:10px} .renderTag.der{right:10px}
+.enRender .velo,.enRender .salirTactil,.enRender .muestraTag{display:none}
+.fotoMarco.propia .muestraTag{display:none}
+.fotoMarco .muestraTag{bottom:auto;top:8px}
+.panelOsc{background:var(--noche-2);border:1px solid var(--noche-linea);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.panelOsc h3{font-size:13px;letter-spacing:.08em;font-weight:800;color:var(--humo)}
+.subir{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px dashed var(--naranja);color:var(--blanco);border-radius:var(--r);padding:14px;font-weight:700;font-size:14px;cursor:pointer;text-align:center}
+.subir:hover{background:rgba(240,138,12,.12)} .subir:focus-within{outline:2px solid var(--naranja);outline-offset:2px}
+#fotoPiezas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.mini{border:1.5px solid var(--noche-linea);background:var(--arena);border-radius:4px;padding:0;overflow:hidden;aspect-ratio:1}
+.mini img{width:100%;height:100%;object-fit:cover} .mini.on{border-color:var(--naranja);box-shadow:0 0 0 1.5px var(--naranja)}
+.panelOsc .desl span{color:var(--humo)}
+.fotoPie{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.fotoPie b{display:block;font-family:var(--f-disp);font-weight:800;font-size:15px;text-transform:uppercase;line-height:1.15}
+.fotoPie small{font-family:var(--f-mono);font-size:11.5px;color:var(--humo)} .fotoPie .p{font-family:var(--f-disp);font-weight:800;font-size:24px}
+.nota{font-size:12.5px;color:var(--humo);margin:0}
+
+/* ---------- tienda ---------- */
+.rej{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.tarj{position:relative;background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .2s ease, box-shadow .2s ease;will-change:transform}
+.tarj:hover{box-shadow:0 18px 40px -18px rgba(38,34,32,.45)}
+.tarj .im{position:relative;aspect-ratio:1;background:var(--arena);overflow:hidden;border:0;padding:0;display:block;width:100%}
+.tarj .im img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)} .tarj:hover .im img{transform:scale(1.06)}
+.tarj .im::after{content:"";position:absolute;inset:0;background:radial-gradient(40% 40% at var(--mx,50%) var(--my,50%),rgba(255,253,250,.42),transparent 70%);opacity:0;transition:opacity .2s} .tarj:hover .im::after{opacity:1}
+.band{position:absolute;left:10px;top:10px;background:var(--carbon);color:var(--blanco);font-family:var(--f-disp);font-weight:800;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:3px;z-index:1}
+.band.n{background:var(--naranja)}
+.tarj .cu{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tarj h3{font-size:15px;font-weight:800;letter-spacing:0;line-height:1.2}
+.tarj .pr{display:flex;align-items:baseline;gap:8px;font-family:var(--f-disp);font-weight:800;font-size:19px} .tarj .pr s{font-size:13px;color:var(--gris);font-weight:600}
+.tarj .fe{font-size:12.5px;color:var(--ok);font-weight:600;display:flex;align-items:center;gap:6px} .tarj .fe::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.tarj .ac{display:flex;gap:6px;margin-top:auto;padding-top:6px} .tarj .ac .btn{flex:1}
+.tarj .mas{flex:none!important;width:42px;padding:0;font-size:20px}
+
+/* ---------- entrega ---------- */
+.entrega{background:var(--arena)}
+.zonas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:26px}
+.zonas .tab{background:var(--blanco)} .zonas .tab.on{background:var(--carbon)}
+.fechaGrande{font-family:var(--f-disp);font-weight:900;text-transform:uppercase;font-size:clamp(28px,5.4vw,76px);line-height:1;letter-spacing:-.02em;min-height:1em}
+.fechaGrande span{display:inline-block} .fechaGrande .gira{animation:gira .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes gira{0%{transform:translateY(60%) rotateX(-80deg);opacity:0}100%{transform:none;opacity:1}}
+.ruta{position:relative;margin-top:44px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.ruta::before{content:"";position:absolute;left:0;right:0;top:15px;height:2px;background:repeating-linear-gradient(90deg,var(--carbon) 0 8px,transparent 8px 16px)}
+.ruta .camion{position:absolute;top:-24px;left:0;width:54px;height:40px;color:var(--naranja);transition:left 1.5s cubic-bezier(.6,0,.2,1);z-index:1}
+.ruta .camion svg{width:54px;height:40px;display:block}
+.paso{position:relative;padding-top:42px;min-width:0}
+.paso::before{content:"";position:absolute;left:0;top:8px;width:16px;height:16px;border-radius:50%;background:var(--arena);border:3px solid var(--carbon)}
+.paso.ya::before{background:var(--naranja);border-color:var(--naranja)}
+.paso b{display:block;font-family:var(--f-disp);font-weight:800;text-transform:uppercase;font-size:14px;line-height:1.15}
+.paso span{font-family:var(--f-mono);font-size:12.5px;color:var(--carbon-2)}
+.entregaPie{display:flex;gap:10px 28px;flex-wrap:wrap;margin-top:34px;font-size:15px} .entregaPie b{font-family:var(--f-mono);font-weight:600}
+
+/* ---------- pie ---------- */
+footer{background:var(--noche);color:var(--humo);padding-block:48px 28px;font-size:14.5px}
+footer .wrap{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:28px}
+footer h4{font-family:var(--f-disp);text-transform:uppercase;letter-spacing:.1em;font-size:12px;color:var(--blanco);margin:0 0 10px}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px} footer a{color:var(--blanco)}
+footer .fin{grid-column:1/-1;border-top:1px solid var(--noche-linea);padding-top:18px;font-size:12.5px}
+
+/* ---------- ficha 3D ---------- */
+.ficha{position:fixed;inset:0;z-index:80;background:var(--papel);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr);opacity:0;visibility:hidden;transform:translateY(24px);transition:opacity .3s, transform .4s cubic-bezier(.2,.8,.2,1), visibility 0s .4s}
+.ficha.on{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.fichaVis{position:relative;background:radial-gradient(60% 60% at 50% 55%,#3A2A1C,#15110F 78%);min-height:0}
+.fichaVis.claro{background:radial-gradient(60% 60% at 50% 55%,#F4E8DA,#E3CDB0)}
+#fichaLienzo{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;cursor:grab}
+.fichaVis img.resp{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none}
+.fichaBot{position:absolute;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:4px;background:rgba(21,17,15,.82);padding:4px;border-radius:999px;z-index:2}
+.fichaBot .tab{color:var(--humo)} .fichaBot .tab[aria-pressed="true"]{background:var(--naranja);color:var(--blanco)}
+.fichaInfo{overflow:auto;padding:26px clamp(18px,3vw,38px) calc(26px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+.fichaInfo h2{font-size:clamp(24px,2.6vw,36px)}
+.fichaInfo .pr{display:flex;align-items:baseline;gap:10px;font-family:var(--f-disp);font-weight:800;font-size:30px} .fichaInfo .pr s{font-size:16px;color:var(--gris)} .fichaInfo .pr small{font-family:var(--f-text);font-size:13px;font-weight:500;color:var(--gris)}
+.cajaFecha{background:var(--arena-2);border-radius:var(--r);padding:13px 14px;font-size:14.5px} .cajaFecha b{display:block;font-size:16.5px}
+.cajaFecha select{margin-top:8px;width:100%;padding:9px;border:1px solid var(--linea);border-radius:4px;background:var(--blanco);font:inherit;font-size:14px}
+.datos{display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px 16px;font-size:14px;margin:0} .datos dt{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--gris);padding-top:2px} .datos dd{margin:0}
+.fichaInfo .ac{display:grid;gap:8px} .fichaInfo .ac2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cerrar{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px));z-index:3;width:44px;height:44px;border-radius:50%;border:0;background:var(--carbon);color:var(--blanco);display:grid;place-items:center}
+
+/* ---------- carrito, avisos ---------- */
+.fondoOsc{position:fixed;inset:0;background:rgba(21,17,15,.5);opacity:0;visibility:hidden;transition:opacity .25s, visibility 0s .25s;z-index:88} .fondoOsc.on{opacity:1;visibility:visible;transition-delay:0s}
+.cajon{position:fixed;top:0;right:0;bottom:0;width:min(430px,100%);background:var(--blanco);z-index:90;transform:translateX(102%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.cajon.on{transform:none}
+.cj-h{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--linea)} .cj-h h3{font-size:18px} .cj-h .icono{color:var(--carbon)} .cj-h .icono:hover{background:var(--arena-2)}
+.envio{padding:12px 18px;background:var(--arena-2);font-size:13.5px} .envio .bar{height:5px;background:var(--linea);border-radius:3px;margin-top:8px;overflow:hidden} .envio .bar i{display:block;height:100%;background:var(--naranja);transition:width .4s}
+.cj-items{flex:1;overflow:auto;padding:6px 18px}
+.it{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--linea)}
+.it img{width:70px;height:70px;object-fit:cover;border-radius:4px;background:var(--arena)} .it b{font-size:14.5px;line-height:1.25;display:block} .it small{color:var(--gris);font-size:12.5px;display:block}
+.it .q{display:inline-flex;align-items:center;border:1px solid var(--linea);border-radius:4px;margin-top:8px} .it .q button{border:0;background:transparent;width:30px;height:30px} .it .q span{min-width:24px;text-align:center;font-size:14px}
+.it .rm{border:0;background:transparent;color:var(--gris);font-size:12.5px;text-decoration:underline;margin-left:10px;padding:0} .it .p{font-weight:700}
+.cj-f{padding:16px 18px;border-top:1px solid var(--linea);display:grid;gap:8px} .tot{display:flex;justify-content:space-between;font-size:14.5px} .tot.big{font-family:var(--f-disp);font-weight:800;font-size:19px;padding-top:6px}
+.cj-vacio{flex:1;display:grid;place-content:center;text-align:center;gap:14px;padding:30px}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--carbon);color:var(--blanco);padding:12px 18px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:opacity .25s, transform .25s;z-index:100;max-width:calc(100% - 32px);text-align:center;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.notas{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(74px + env(safe-area-inset-top,0px));width:min(420px,calc(100% - 32px));max-height:calc(100vh - 100px);overflow:auto;background:var(--blanco);color:var(--carbon);border:1px solid var(--linea);border-radius:var(--r);box-shadow:0 20px 60px rgba(0,0,0,.35);padding:18px;z-index:95;font-size:14px}
+.notas h4{font-family:var(--f-disp);text-transform:uppercase;margin:0 0 10px;font-size:14px} .notas ul{margin:0 0 12px;padding-left:18px;display:grid;gap:7px} .notas button{border:0;background:var(--carbon);color:var(--blanco);padding:9px 14px;border-radius:4px;font-weight:700}
+
+/* ---------- angosto ---------- */
+@media (max-width:1080px){
+  .taller{grid-template-columns:minmax(0,1fr) 290px} .taller .piezasLado{grid-column:1/-1;order:2}
+  #cuartoPiezas{flex-direction:row;flex:none;overflow-x:auto;padding-bottom:6px} .pz{flex:none;width:210px} .piezasLado{max-height:none}
+  .estudio{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .halo{background:radial-gradient(80% 44% at 50% 34%, rgba(240,138,12,.26), rgba(240,138,12,.06) 50%, transparent 76%),linear-gradient(180deg,#15110F,#1C1613 60%,#120E0C)}
+  .halo::after{mask-image:radial-gradient(80% 44% at 50% 34%,#000,transparent 80%);-webkit-mask-image:radial-gradient(80% 44% at 50% 34%,#000,transparent 80%)}
+  .paneles{align-items:end;padding-bottom:52px}
+  .panel{max-width:100%} .panel h1{font-size:clamp(32px,9.6vw,60px)} .panel .ceja{margin-bottom:8px} .panel .fila .btn{flex:1;padding:13px 8px;font-size:11.5px;white-space:nowrap} .llega{font-size:12.5px} .panel p:not(.ceja){margin-top:12px;font-size:15.5px} .panel .fila{margin-top:16px} .llega{margin-top:14px}
+  .pin::after{content:"";position:absolute;left:0;right:0;bottom:0;height:56%;background:linear-gradient(180deg,transparent,rgba(21,17,15,.86) 46%,#15110F);pointer-events:none}
+  .paneles,.riel,.baja{z-index:1} .riel{top:28%} .baja{bottom:10px} .baja::after{height:20px}
+  .sin3d .respaldo{position:relative;right:auto;top:auto;transform:none;width:100%;margin-top:16px} .sin3d .panel{max-width:100%}
+  .intro{grid-template-columns:1fr}
+  .taller{grid-template-columns:1fr} .cuartoCaja{min-height:0;aspect-ratio:1/1}
+  .ficha{grid-template-columns:1fr;grid-template-rows:44vh minmax(0,1fr)}
+  footer .wrap{grid-template-columns:1fr}
+  .ruta{grid-template-columns:1fr;gap:0} .ruta::before{left:7px;right:auto;top:0;bottom:0;width:2px;height:auto;background:repeating-linear-gradient(180deg,var(--carbon) 0 8px,transparent 8px 16px)}
+  .ruta .camion{display:none} .paso{padding:0 0 22px 34px} .paso::before{top:2px}
+  .cab nav a{padding:8px 7px;font-size:11px}
+}
+@media (max-width:560px){ .proto .largo{display:none} .proto .breve{display:inline} .proto .wrap{flex-wrap:nowrap} .cab nav{mask-image:linear-gradient(90deg,#000 80%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 80%,transparent)} .ctrl .tab{padding:8px 10px;font-size:10.5px} .cab .logo svg{height:28px} .cab .wrap{gap:10px} .rej{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} .tarj .cu{padding:10px} .tarj h3{font-size:13.5px} .tarj .ac .btn{padding:10px 8px;font-size:10.5px} .desl{grid-template-columns:74px minmax(0,1fr) auto} }
+@media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important} html{scroll-behavior:auto} .cinta div{animation:none} .panel h1 .marca{background-size:100% 100%} }
+</style>
+
+<div class="proto" role="note"><div class="wrap">
+  <span><b>PROTOTIPO 2</b>&nbsp; <span class="largo">Modelos 3D, fotos, precios y plazos de ejemplo. Nada de esto está publicado.</span><span class="breve">Datos de ejemplo.</span></span>
+  <button type="button" id="abrirNotas">Qué falta confirmar</button>
+</div></div>
+
+<header class="cab"><div class="wrap">
+  <a class="logo" href="#inicio" id="logo" aria-label="Joiwood International, inicio"></a>
+  <nav aria-label="Secciones">
+    <a href="#mundo">Arma tu espacio</a><a href="#foto">En tu foto</a><a href="#tienda">Muebles</a><a href="#entrega">Entrega</a>
+  </nav>
+  <button class="icono" type="button" id="btnCarrito" aria-label="Abrir carrito">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 7h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 7Z"/><path d="M9 7V6a3 3 0 0 1 6 0v1"/></svg>
+    <span class="globo num" id="cuenta" hidden>0</span>
+  </button>
+</div></header>
+
+<main>
+<section class="historia oscuro sin3d" id="inicio" aria-label="Presentación">
+  <div class="pin">
+    <div class="halo"></div>
+    <canvas id="escenario" aria-label="Mueble de TV Coronado 180 en 3D. Arrastra para girarlo."></canvas>
+    <svg id="lineas" aria-hidden="true"></svg>
+    <div id="rotulos" aria-hidden="true"></div>
+    <div class="wrap paneles">
+      <div class="panel on">
+        <p class="ceja">Muebles listos, fabricados en Panamá</p>
+        <h1>Ábrelo antes de <span class="marca">comprarlo</span></h1>
+        <p>Gira cada mueble, míralo pieza por pieza y pruébalo en una foto de tu sala. Antes de pagar ya sabes el día que llega.</p>
+        <div class="fila"><a class="btn btn-n" href="#mundo">Armar mi espacio</a><a class="btn btn-l" href="#foto">Probar en mi foto</a></div>
+        <div class="llega"><i></i><span id="heroLlega"></span></div>
+        <img class="respaldo" src="img/p-tv.jpg" alt="Mueble de TV Coronado 180">
+      </div>
+      <div class="panel">
+        <p class="ceja">Por dentro</p>
+        <h2>Sin nada <span class="marca">escondido</span></h2>
+        <p>Sigue bajando y el Coronado 180 se abre pieza por pieza. Así ves de qué está hecho antes de que llegue a tu casa.</p>
+      </div>
+      <div class="panel">
+        <p class="ceja">Medidas</p>
+        <h2>180 × 40 × 52 <span class="marca">cm</span></h2>
+        <p>Ancho, fondo y alto marcados sobre el mueble. Compáralos con tu pared antes de pedirlo.</p>
+      </div>
+      <div class="panel">
+        <p class="ceja">Acabados</p>
+        <h2>Elige el <span class="marca">tono</span></h2>
+        <div class="muestras" id="heroAcabados"></div>
+        <div class="precioFila"><b class="num">$429.00</b><s class="num">$489.00</s><span>Mueble de TV Coronado 180</span></div>
+        <div class="fila"><button class="btn btn-n" type="button" id="heroComprar">Agregar al carrito</button><button class="btn btn-l" type="button" id="heroFicha">Ver la ficha</button></div>
+      </div>
+    </div>
+    <div class="riel" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+    <div class="baja" aria-hidden="true">Baja para abrirlo</div>
+  </div>
+</section>
+
+<div class="cinta" aria-hidden="true"><div id="cinta"></div></div>
+
+<section class="banda sin3d" id="mundo">
+  <div class="wrap">
+    <div class="intro">
+      <div><p class="ceja">Arma tu espacio</p><h2>Pon tus medidas y <span class="marca">mueve</span> los muebles</h2></div>
+      <p>Escribe el ancho y el fondo de tu cuarto. Arrastra cada mueble, gíralo y mira cuántos centímetros quedan libres hasta la pared.</p>
+    </div>
+    <p class="aviso3d">Este navegador no muestra 3D. Abre el prototipo en Chrome, Safari o Edge para armar el cuarto.</p>
+    <div class="taller">
+      <aside class="lado piezasLado" aria-label="Muebles para agregar">
+        <h3>Suma un mueble</h3>
+        <div id="cuartoPiezas"></div>
+      </aside>
+      <div class="cuartoCaja">
+        <canvas id="cuarto" aria-label="Cuarto en 3D. Arrastra un mueble para moverlo o el piso para girar la vista."></canvas>
+        <div id="cuartoRotulos" aria-hidden="true"></div>
+        <div class="ctrl"><div class="tabs" id="cuartoAmbientes"></div></div>
+        <div class="barraPz" id="cuartoBarra" hidden></div>
+        <button class="velo" type="button" id="cuartoVelo" hidden>Toca para mover los muebles</button>
+        <button class="salirTactil" type="button" id="cuartoSalir" hidden>Listo</button>
+      </div>
+      <aside class="lado" aria-label="Tu cuarto">
+        <h3>Tu cuarto</h3>
+        <label class="desl" for="cuartoAncho"><span>Ancho</span><input type="range" id="cuartoAncho" min="2.4" max="6" step="0.1" value="4"><b id="cuartoAnchoV">4.0 m</b></label>
+        <label class="desl" for="cuartoFondo"><span>Fondo</span><input type="range" id="cuartoFondo" min="2.4" max="6" step="0.1" value="3.4"><b id="cuartoFondoV">3.4 m</b></label>
+        <div class="filaPt"><span>Piso</span><span id="cuartoPisos" style="display:flex;gap:7px"></span></div>
+        <div class="filaPt"><span>Pared</span><span id="cuartoParedes" style="display:flex;gap:7px"></span></div>
+        <button class="btn btn-l btn-ch" type="button" id="cuartoLuz" aria-pressed="false">Ver de noche</button>
+        <div class="aviso" id="cuartoAviso" role="status"></div>
+        <ul id="cuartoLista"></ul>
+        <button class="btn btn-n" type="button" id="cuartoComprar" style="margin-top:auto">Agregar todo al carrito</button>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="banda oscuro sin3d" id="foto">
+  <div class="wrap">
+    <div class="intro">
+      <div><p class="ceja">En tu casa</p><h2>Sube una foto de tu <span class="marca">cuarto</span></h2></div>
+      <p>El mueble aparece sobre tu foto con su sombra. Arrástralo al piso, ajusta el tamaño y cambia el acabado. Tu foto se queda en tu teléfono.</p>
+    </div>
+    <p class="aviso3d">Este navegador no muestra 3D. Abre el prototipo en Chrome, Safari o Edge para probar los muebles en tu foto.</p>
+    <div class="estudio">
+      <div>
+        <div class="fotoMarco" id="fotoMarco">
+          <img id="fotoImg" alt="Foto del cuarto donde se prueba el mueble">
+          <canvas id="fotoLienzo" aria-label="Mueble sobre la foto. Arrástralo para moverlo."></canvas>
+          <span class="muestraTag">Cuarto de muestra hecho con IA</span>
+          <div class="renderCapa" id="fotoRender" hidden>
+            <img id="fotoRenderImg" alt="Render con IA de muestra del mueble en el cuarto">
+            <div class="renderLinea" aria-hidden="true"><i></i></div>
+            <span class="renderTag izq" aria-hidden="true">Modelo 3D</span><span class="renderTag der" aria-hidden="true">Render con IA (muestra)</span>
+            <input type="range" id="fotoCorte" min="0" max="100" value="50" aria-label="Comparar el modelo 3D con el render con IA">
+          </div>
+          <button class="velo" type="button" id="fotoVelo" hidden>Toca para mover el mueble</button>
+          <button class="salirTactil" type="button" id="fotoSalir" hidden>Listo</button>
+        </div>
+        <div class="fotoPie" style="margin-top:14px">
+          <div><b id="fotoNombre"></b><small id="fotoMedidas"></small></div>
+          <div style="display:flex;align-items:center;gap:14px"><span class="p num" id="fotoPrecio"></span><button class="btn btn-n" type="button" id="fotoComprar">Agregar al carrito</button></div>
+        </div>
+      </div>
+      <aside class="panelOsc" aria-label="Controles de la foto">
+        <label class="subir" for="fotoArchivo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3M12 15V4m0 0L7.5 8.5M12 4l4.5 4.5"/></svg>Subir una foto de mi cuarto<input class="sr" type="file" id="fotoArchivo" accept="image/*"></label>
+        <div class="tabs" id="fotoMuestras"></div>
+        <button class="btn btn-n btn-ch" type="button" id="fotoRenderBtn" aria-pressed="false">Ver render con IA</button>
+        <p class="nota" id="fotoRenderNota" role="status">Muestra de cómo queda el mueble pasado por IA para que parezca una foto real.</p>
+        <h3>Mueble</h3>
+        <div id="fotoPiezas"></div>
+        <div class="filaPt"><span style="color:var(--humo)">Acabado</span><span id="fotoAcabados" style="display:flex;gap:7px"></span></div>
+        <h3>Ajusta la toma</h3>
+        <div id="fotoControles" style="display:grid;gap:9px"></div>
+        <p class="nota">Vista aproximada: sirve para ver el color y el tamaño a ojo. Para saber si cabe, usa las medidas.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="banda" id="tienda">
+  <div class="wrap">
+    <div class="intro">
+      <div><p class="ceja">Entrega inmediata</p><h2>Los <span class="marca">muebles</span></h2></div>
+      <div class="tabs" id="filtros" style="justify-content:flex-end"></div>
+    </div>
+    <div class="rej" id="rej"></div>
+  </div>
+</section>
+
+<section class="banda entrega" id="entrega">
+  <div class="wrap">
+    <p class="ceja">Entrega</p>
+    <h2 style="margin-bottom:26px">Llega con <span class="marca">fecha</span></h2>
+    <div class="zonas" id="zonas"></div>
+    <div class="fechaGrande" id="fechaGrande" aria-live="polite"></div>
+    <div class="ruta" id="ruta"></div>
+    <div class="entregaPie" id="entregaPie"></div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <div><div id="logoPie" style="line-height:0"></div><p style="max-width:38ch;margin:14px 0 0">Muebles listos para tu casa, fabricados en nuestra planta en Panamá. Te decimos el día que llegan y los armamos por ti.</p></div>
+  <div><h4>Visítanos</h4><ul><li>Parque Centenario, Ofibodega OB-25</li><li>L a V 8:00 a 4:30 · S 8:00 a 12:00</li><li class="mono num">WhatsApp +507 6674-8740</li></ul></div>
+  <div><h4>Este prototipo</h4><ul><li><a id="linkP1" target="_blank" rel="noopener">Ver el prototipo 1 (tienda completa y pago)</a></li><li><a href="#inicio">Volver arriba</a></li></ul></div>
+  <div class="fin">© 2026 Joiwood International. Precios en dólares con ITBMS incluido. Prototipo de diseño, sin ventas reales.</div>
+</div></footer>
+
+<div class="ficha" id="ficha" role="dialog" aria-modal="true" aria-label="Ficha del mueble" aria-hidden="true">
+  <button class="cerrar" type="button" id="fichaCerrar" aria-label="Cerrar la ficha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <div class="fichaVis" id="fichaVis">
+    <canvas id="fichaLienzo" aria-label="Mueble en 3D. Arrastra para girarlo."></canvas>
+    <img class="resp" id="fichaResp" alt="">
+    <div id="fichaRotulos" aria-hidden="true"></div>
+    <div class="fichaBot"><button class="tab" type="button" id="fichaAbrir" aria-pressed="false">Abrirlo</button><button class="tab" type="button" id="fichaPlano" aria-pressed="false">Medidas</button><button class="tab" type="button" id="fichaLuz" aria-pressed="false">Fondo claro</button></div>
+  </div>
+  <div class="fichaInfo" id="fichaInfo"></div>
+</div>
+
+<div class="fondoOsc" id="fondoOsc"></div>
+<aside class="cajon" id="cajon" aria-label="Carrito" aria-hidden="true"></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="notas" id="notas" hidden>
+  <h4>Lo que falta confirmar con Joiwood</h4>
+  <ul>
+    <li>Modelos 3D: armados con medidas de ejemplo. Para la tienda real hace falta el despiece de cada mueble (Joiwood lo tiene en su programa de corte).</li>
+    <li>Rótulos del despiece (16 mm, bisagras, cantos, patas): de ejemplo.</li>
+    <li>"En tu foto" es una vista aproximada hecha en el navegador. El botón "Ver render con IA" muestra dos imágenes ya hechas para los cuartos de ejemplo. Con la foto de un cliente, ese render lo hace un servicio de imágenes que cobra por cada una y necesita un servidor.</li>
+    <li>Fotos de producto y cuartos vacíos: generados con IA para el prototipo. Nunca van en la tienda real ni en anuncios.</li>
+    <li>Precios, plazos, tarifas por zona, armado y garantía: de ejemplo. El "Venus 60" es un modelo real.</li>
+    <li>Pago: es el del prototipo 1 (checkout de Shopify con Tilopay sobre BAC).</li>
+    <li>Horas: esta versión pide más trabajo que el prototipo 1 por los modelos 3D de cada mueble.</li>
+  </ul>
+  <button type="button" id="cerrarNotas">Entendido</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/datos.js"></script>
+<script src="js/modelos.js"></script>
+<script src="js/escena.js"></script>
+<script src="js/mundo.js"></script>
+<script src="js/foto.js"></script>
+<script src="js/app.js"></script>
+
+</body></html>
